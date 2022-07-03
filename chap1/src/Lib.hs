@@ -3,7 +3,7 @@ module Lib where
 import Control.Monad.State
 
 someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+someFunc = interp prog
 
 type Id = String
 
