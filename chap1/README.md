@@ -23,4 +23,4 @@ val prog =
    PrintStm[IdExp "b"]))
 ```
 
-src/Lib.hs contains Haskell reimplementaion, as well as intepreter. Instead of passing table around, I decided to use StateT
+`src/Lib.hs` contains Haskell reimplementaion, as well as intepreter. Instead of passing table around, I decided to use StateT
