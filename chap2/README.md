@@ -207,4 +207,4 @@ end
 ```
 
 We gonna use Haskell, and [Alex](https://haskell-alex.readthedocs.io/en/latest/introduction.html) for doing that.
-Instead of keeping tokens as strings, we gonna create an algebraic data type, that has each contructor assigned to each possible token. Most of them will just carry their position(`type Pos = (Int, Int) -- line, col`), some of them, such as String, ID, or Int will also carry parsed value
+Instead of keeping tokens as strings, we gonna create an algebraic data type, that has each contructor assigned to each possible token. Most of them will just carry their position(`type Pos = (Int, Int) -- line, col`), some of them, such as String, ID, or Int will also carry parsed value. I know `Lexer.hs` should be in gitignore, but I think it's more fun when you can look what it is
