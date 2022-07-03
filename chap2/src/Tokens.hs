@@ -47,3 +47,4 @@ data Token
   | TokInt Pos Int
   | TokId Pos String
   | TokEof Pos
+  deriving (Show)
