@@ -23,4 +23,10 @@ val prog =
    PrintStm[IdExp "b"]))
 ```
 
-[`src/Lib.hs`](src/Lib.hs) contains Haskell reimplementaion, as well as intepreter. Instead of passing table around, I decided to use StateT
+The book describes two functions to implement:
+- `maxargs : stm -> int` which was reimplemented pretty trivially
+- `interp : stm -> unit` which was supposed to have sideffects, and relied on two others mutually recursive
+  - `interpStm : stm * table -> table` as for `AssignStm` it would update the table of variable definitions
+  - `inteprExp : stm * table -> int * table` which could both evaluate to some value, as well as modify state
+
+[`src/Lib.hs`](src/Lib.hs) contains Haskell reimplementaion of AST definition, as well as those two functions. Instead of passing table around, I decided to use StateT, with IO monad for interpreter
