@@ -43,9 +43,9 @@ data Token
   | TokSemicolon Pos
   | TokColon Pos
   | TokComma Pos
-  | TokString Pos String
-  | TokInt Pos Int
-  | TokId Pos String
+  | TokString Pos String -- TODO: Implement Lexer rule
+  | TokInt Pos Int -- TODO: Implement Lexer rule
+  | TokId Pos String -- TODO: Implement Lexer rule
   deriving (Show)
 
 -- | TokEof Pos
