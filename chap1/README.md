@@ -1,6 +1,6 @@
 # Chapter 1
 
-Chapter 1 contains description of what is AST and provides us with this exmple in Standart ML:
+Chapter 1 contains description of what is AST and [provides](https://www.cs.princeton.edu/~appel/modern/ml/chap1/slp.sml) us with this exmple in Standart ML:
 
 ```sml
 type id = string
@@ -23,4 +23,4 @@ val prog =
    PrintStm[IdExp "b"]))
 ```
 
-`src/Lib.hs` contains Haskell reimplementaion, as well as intepreter. Instead of passing table around, I decided to use StateT
+[`src/Lib.hs`](src/Lib.hs) contains Haskell reimplementaion, as well as intepreter. Instead of passing table around, I decided to use StateT
