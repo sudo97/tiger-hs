@@ -3199,7 +3199,7 @@ alex_actions = array (0 :: Int, 41)
   , (0,alex_action_14)
   ]
 
-{-# LINE 55 "src/Lexer.x" #-}
+{-# LINE 56 "src/Lexer.x" #-}
 -- Each action has type :: AlexPosn -> String -> Token
 prog = "123 /* some */"
 pos construct (AlexPn _ line col) _ = construct (line, col)

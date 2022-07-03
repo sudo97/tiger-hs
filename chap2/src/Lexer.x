@@ -7,10 +7,11 @@ import Tokens
 
 $digit = 0-9            -- digits
 $alpha = [a-zA-Z]       -- alphabetic characters
+$literally_any = [.\n]  -- . is the same as [^\n]
 
 tokens :-
   $white+                        ;
-  "/*"[.\n]*"*/"                 ;
+  "/*"$literally_any*"*/"                 ;
   $digit+                        { \(AlexPn _ line col) val -> TokInt (line, col) (read val) }
   type                           { pos TokType }
   var                            { pos TokVar }
