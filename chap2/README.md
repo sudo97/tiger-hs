@@ -205,3 +205,5 @@ struct
 
 end
 ```
+
+We gonna use Haskell, and [Alexa](https://haskell-alex.readthedocs.io/en/latest/introduction.html) for doing that
