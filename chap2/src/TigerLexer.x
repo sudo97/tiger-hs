@@ -1,5 +1,5 @@
 {
-module Lexer (lexTiger, prog) where
+module TigerLexer (lexTiger, prog) where
 import Tokens
 }
 

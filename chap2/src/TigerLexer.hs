@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-missing-signatures #-}
 {-# LANGUAGE CPP #-}
-{-# LINE 1 "src/Lexer.x" #-}
-module Lexer (lexTiger, prog) where
+{-# LINE 1 "src/TigerLexer.x" #-}
+module TigerLexer (lexTiger, prog) where
 import Tokens
 #if __GLASGOW_HASKELL__ >= 603
 #include "ghcconfig.h"
@@ -5555,7 +5555,7 @@ alex_actions = array (0 :: Int, 26)
   , (0,alex_action_28)
   ]
 
-{-# LINE 58 "src/Lexer.x" #-}
+{-# LINE 58 "src/TigerLexer.x" #-}
 -- Each action has type :: AlexPosn -> String -> Token
 prog = "123 /* some */"
 pos construct (AlexPn _ line col) _ = construct (line, col)
