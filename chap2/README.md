@@ -210,6 +210,6 @@ We gonna use Haskell, and [Alex](https://haskell-alex.readthedocs.io/en/latest/i
 Instead of keeping tokens as strings, we gonna create an algebraic data type, that has each contructor assigned to each possible token. Most of them will just carry their position(`type Pos = (Int, Int) -- line, col`), some of them, such as String, ID, or Int will also carry parsed value. I know `Lexer.hs` should be in gitignore, but I think it's more fun when you can look what it is
 
 TODO:  
-[x] String value that you return for a string literal should have all the escape sequences translated into their meanings  
-[ ] Detect unclosed comments, and unclosed strings  
-[ ] Provide proper error handling  
+ [x] String value that you return for a string literal should have all the escape sequences translated into their meanings  
+ [ ] Detect unclosed comments, and unclosed strings  
+ [ ] Provide proper error handling  
