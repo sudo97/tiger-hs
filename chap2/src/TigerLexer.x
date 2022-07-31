@@ -32,7 +32,7 @@ tokens :-
   then                            { pos TokThen }
   if                              { pos TokIf }
   array                           { pos TokArray }
-  ":="                             { pos TokAssign }
+  ":="                            { pos TokAssign }
   "||"                            { pos TokOr }
   "&&"                            { pos TokAnd }
   ">="                            { pos TokGe }
@@ -56,12 +56,11 @@ tokens :-
   ":"                             { pos TokColon }
   ","                             { pos TokComma }
 {
--- Each action has type :: AlexPosn -> String -> Token
 {-
   TODO:
   - Detect unclosed comments, and unclosed strings
 -}
-prog = "123 /* some */"
+prog = "123 /* some */ if else"
 pos construct (AlexPn _ line col) _ = construct (line, col)
 lexTiger = alexScanTokens
 }
