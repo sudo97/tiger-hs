@@ -26,11 +26,14 @@ source-repository head
 library
   exposed-modules:
       TigerLexer
+      Token
       Tokens
   other-modules:
       Paths_chap2
   hs-source-dirs:
       src
+  build-tools:
+      alex
   build-depends:
       array
     , base >=4.7 && <5

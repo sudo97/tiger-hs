@@ -13,6 +13,6 @@ main = do
   let result = lexTiger contents
   print result
   case result of
-    [(TokString _ s)] -> putStrLn s
-    _ -> putStrLn "Something is wrong"
+    Right [TokString _ s] -> putStrLn s
+    Left e -> putStrLn e
   pure ()

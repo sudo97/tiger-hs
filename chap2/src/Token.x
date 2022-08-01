@@ -1,5 +1,5 @@
 {
-module Main where
+module Token where
 }
 
 %wrapper "monad"

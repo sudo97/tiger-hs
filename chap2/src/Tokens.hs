@@ -43,9 +43,8 @@ data Token
   | TokSemicolon Pos
   | TokColon Pos
   | TokComma Pos
-  | TokString Pos String -- TODO: test Lexer rule on a real case
+  | TokString Pos String
   | TokInt Pos Int
   | TokId Pos String
+  | TokEOF
   deriving (Show)
-
--- | TokEof Pos
