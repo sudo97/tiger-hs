@@ -15,7 +15,7 @@ tokens :-
 <comment> .                         { skip }
 <comment> \n                        { skip }
 <comment> "*/"                      { begin 0 }
-<0> $digit+                         {  }
+<0> $digit+                         { readInteger }
 -- <0> \"                               { begin str }
 -- <str> [^\"]*\"                       { \((AlexPn _ line col), _, _, val) len -> alexSetStartCode 0 *> (pure $ TokString (line, col) (take (len-1) val)) }
 --  <0> \".*\"                          { \(AlexPn _ line col) val -> TokString (line, col) (read val)}
