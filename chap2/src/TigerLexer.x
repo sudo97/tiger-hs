@@ -1,4 +1,5 @@
 {
+{-# LANGUAGE NamedFieldPuns #-}
 module TigerLexer (lexTiger, prog) where
 import Tokens
 }
@@ -12,16 +13,16 @@ $literally_any = [.\n]  -- . is the same as [^\n]
 tokens :-
 <0> $white+                         ;
 <0> "/*"                            { begin comment }
-<comment> .                         { skip }
-<comment> \n                        { skip }
+<comment> $literally_any            { skip }
 <comment> "*/"                      { begin 0 }
--- <0> $digit+                         { readInteger }
--- <0> \"                              { begin str }
--- <str> \\\"                          { skip }
--- <str> [^\"]*                        { readStr }
--- <str> \"                            { begin 0 }
--- <str> [^\"]*\"                       { \((AlexPn _ line col), _, _, val) len -> alexSetStartCode 0 *> (pure $ TokString (line, col) (take (len-1) val)) }
---  <0> \".*\"                          { \(AlexPn _ line col) val -> TokString (line, col) (read val)}
+<0> $digit+                         { readInteger }
+<0>    \"                           { setBufferStart `andBegin` str }
+<str>  \\n                          { addSpecificChar '\n' }
+<str>  \\t                          { addSpecificChar '\t' }
+<str>  \\\"                         { addSpecificChar '\"' }
+<str>  \\\\                         { addSpecificChar '\\' }
+<str>  [^\"]                        { scanStringItem }
+<str>  \"                           { endStr `andBegin` 0 }
 --  <0> $alpha+($digit|$alpha|"_")*     { \(AlexPn _ line col) val -> TokId (line, col) val }
 --  <0> type                            { pos TokType }
 --  <0> var                             { pos TokVar }
@@ -67,17 +68,38 @@ tokens :-
 -- prog = "   /* some */ \"string\\\" here\" "
 prog = "  /*comment lslalsdf \n \n */ */ "
 
--- readInteger ((AlexPn _ line col), _, _, val) len = pure $ TokInt (line, col) (read $ take len val)
+readInteger ((AlexPn _ line col), _, _, val) len = pure $ TokInt (line, col) (read $ take len val)
 
 -- readStr  ((AlexPn _ line col), _, _, val) len = pure $ TokString (line, col) (take len val)
 -- pos construct (AlexPn _ line col) _ = construct (line, col)
 
-data AlexUserState = AlexUserState { lexerStringValue :: String }
+data AlexUserState = AlexUserState { lexerStringBuffer :: String, bufferStart :: Pos }
 
-alexInitUserState = AlexUserState ""
+alexInitUserState = AlexUserState { lexerStringBuffer = "", bufferStart = undefined }
 
 get :: Alex AlexState
 get = Alex $ \st -> Right (st, st)
+
+setBufferStart ((AlexPn _ line col), _, _, _) _ = do
+  st <- alexGetUserState
+  alexSetUserState $ st { bufferStart = (line, col)}
+  alexMonadScan
+
+
+addSpecificChar c _ _ = do
+  st@(AlexUserState { lexerStringBuffer }) <- alexGetUserState
+  alexSetUserState $ st {lexerStringBuffer = (c:lexerStringBuffer )}
+  alexMonadScan
+
+scanStringItem (_, _, _, (c:_)) _ = do
+  st@(AlexUserState { lexerStringBuffer }) <- alexGetUserState
+  alexSetUserState $ st {lexerStringBuffer = (c:lexerStringBuffer )}
+  alexMonadScan
+
+endStr _ _ = do
+  AlexUserState { lexerStringBuffer, bufferStart } <- alexGetUserState
+  alexSetUserState alexInitUserState
+  (pure $ TokString bufferStart (reverse lexerStringBuffer)) 
 
 alexEOF :: Alex Token
 alexEOF = do

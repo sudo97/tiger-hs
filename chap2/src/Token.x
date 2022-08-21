@@ -19,6 +19,7 @@ tokens :-
 <str>  \\n                             { addSpecificChar '\n' }
 <str>  \\t                             { addSpecificChar '\t' }
 <str>  \\\"                            { addSpecificChar '\"' }
+<str>  \\\\                            { addSpecificChar '\\' }
 <str>  [^\"]                           { scanString }
 <str>  \"                              { endStr `andBegin` 0 }
 <0>    $alpha [$alpha $digit \_ \']*   { \(_, _, _, s) len -> pure $ Var (take len s) }
