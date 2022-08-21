@@ -21,6 +21,7 @@ tokens :-
 <str>  \\t                          { addSpecificChar '\t' }
 <str>  \\\"                         { addSpecificChar '\"' }
 <str>  \\\\                         { addSpecificChar '\\' }
+<str> \n                            { stringNewlineError }
 <str>  [^\"]                        { scanStringItem }
 <str>  \"                           { endStr `andBegin` 0 }
 --  <0> $alpha+($digit|$alpha|"_")*     { \(AlexPn _ line col) val -> TokId (line, col) val }
@@ -101,15 +102,19 @@ endStr _ _ = do
   alexSetUserState alexInitUserState
   (pure $ TokString bufferStart (reverse lexerStringBuffer)) 
 
+stringNewlineError _ _ = do
+  (AlexState {alex_pos = (AlexPn _ endL endC), alex_ust = (AlexUserState { bufferStart = (startL, startC) }) }) <- get
+  alexError $ "Unexpected newline in string(" <> show startL <> ":" <> show startC <> ") at (" <> show endL <> ":" <> show endC <> ")"
+
 alexEOF :: Alex Token
 alexEOF = do
   (AlexState {alex_pos = (AlexPn _ line col), alex_scd = code }) <- get
   case code of
     0 -> pure TokEOF
-    x | x == comment -> alexError $ "Unclosed comment. Unexpected EOF at " <> show line <> ":" <> show col
-    --   | x == str -> alexError $ "Unclosed string. " <> show line <> ":" <> show col
+    x | x == comment -> alexError $ "Unclosed comment. Unexpected EOF at (" <> show line <> ":" <> show col <> ")"
+      | x == str -> alexError $ "Unclosed string. (" <> show line <> ":" <> show col <> ")"
     -- x | x == str -> alexError $ "Unclosed string. Unexpected EOF at " <> show line <> ":" <> show col
-    _ -> alexError $ "Unexpected EOF at " <> show line <> ":" <> show col
+    _ -> alexError $ "Unexpected EOF at (" <> show line <> ":" <> show col <> ")"
 
 lexTiger s = runAlex s loop
   where
