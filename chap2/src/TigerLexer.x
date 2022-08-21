@@ -3,7 +3,7 @@ module TigerLexer (lexTiger, prog) where
 import Tokens
 }
 
-%wrapper "monad"
+%wrapper "monadUserState"
 
 $digit = 0-9            -- digits
 $alpha = [a-zA-Z]       -- alphabetic characters
@@ -15,8 +15,11 @@ tokens :-
 <comment> .                         { skip }
 <comment> \n                        { skip }
 <comment> "*/"                      { begin 0 }
-<0> $digit+                         { readInteger }
--- <0> \"                               { begin str }
+-- <0> $digit+                         { readInteger }
+-- <0> \"                              { begin str }
+-- <str> \\\"                          { skip }
+-- <str> [^\"]*                        { readStr }
+-- <str> \"                            { begin 0 }
 -- <str> [^\"]*\"                       { \((AlexPn _ line col), _, _, val) len -> alexSetStartCode 0 *> (pure $ TokString (line, col) (take (len-1) val)) }
 --  <0> \".*\"                          { \(AlexPn _ line col) val -> TokString (line, col) (read val)}
 --  <0> $alpha+($digit|$alpha|"_")*     { \(AlexPn _ line col) val -> TokId (line, col) val }
@@ -61,20 +64,28 @@ tokens :-
 --  <0> ":"                             { pos TokColon }
 --  <0> ","                             { pos TokComma }
 {
-prog = "   /* some */ "
+-- prog = "   /* some */ \"string\\\" here\" "
+prog = "  /*comment lslalsdf \n \n */ */ "
 
-readInteger ((AlexPn _ line col), _, _, val) len = pure $ TokInt (line, col) (read $ take len val)
+-- readInteger ((AlexPn _ line col), _, _, val) len = pure $ TokInt (line, col) (read $ take len val)
+
+-- readStr  ((AlexPn _ line col), _, _, val) len = pure $ TokString (line, col) (take len val)
 -- pos construct (AlexPn _ line col) _ = construct (line, col)
+
+data AlexUserState = AlexUserState { lexerStringValue :: String }
+
+alexInitUserState = AlexUserState ""
 
 get :: Alex AlexState
 get = Alex $ \st -> Right (st, st)
 
 alexEOF :: Alex Token
 alexEOF = do
-  (AlexState (AlexPn _ line col) _ _ _ code) <- get
+  (AlexState {alex_pos = (AlexPn _ line col), alex_scd = code }) <- get
   case code of
     0 -> pure TokEOF
     x | x == comment -> alexError $ "Unclosed comment. Unexpected EOF at " <> show line <> ":" <> show col
+    --   | x == str -> alexError $ "Unclosed string. " <> show line <> ":" <> show col
     -- x | x == str -> alexError $ "Unclosed string. Unexpected EOF at " <> show line <> ":" <> show col
     _ -> alexError $ "Unexpected EOF at " <> show line <> ":" <> show col
 
