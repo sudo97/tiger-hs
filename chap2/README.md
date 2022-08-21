@@ -232,7 +232,7 @@ So we see here that we run our monad with initial string, and a monadic value. `
 ~~Now, Alex has tiger Lexer in it's examples and it's using `monad` too, but I'm not gonna use it. I'm willing to make mine read easier, and also this would be fair to do it on my own. For now I'm leaving `Token.x` as an easy minimal example of how `monad` wrapper works. `TigerLexer.x` is implemented with `posn` wrapper for now (I'm gonna re-do it in `monad` as my next step).~~
 
 TODO:  
-- [ ] `TigerLexer.x` should be implemented with `monad` wrapper.
+- [ ] `TigerLexer.x` should be implemented with ~~`monad`~~ `monadUserState` wrapper.
 - [ ] String value that you return for a string literal should have all the escape sequences translated into their meanings  
 - [ ] Detect unclosed comments, and unclosed strings  
 - [ ] Provide proper error handling  
