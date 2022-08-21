@@ -234,5 +234,5 @@ So we see here that we run our monad with initial string, and a monadic value. `
 TODO:  
 - [ ] `TigerLexer.x` should be implemented with ~~`monad`~~ `monadUserState` wrapper.
 - [ ] String value that you return for a string literal should have all the escape sequences translated into their meanings  
-- [ ] Detect unclosed comments, and unclosed strings  
+- [-] Detect unclosed comments, and unclosed strings  
 - [ ] Provide proper error handling  
