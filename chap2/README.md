@@ -231,6 +231,11 @@ So we see here that we run our monad with initial string, and a monadic value. `
 
 ~~Now, Alex has tiger Lexer in it's examples and it's using `monad` too, but I'm not gonna use it. I'm willing to make mine read easier, and also this would be fair to do it on my own. For now I'm leaving `Token.x` as an easy minimal example of how `monad` wrapper works. `TigerLexer.x` is implemented with `posn` wrapper for now (I'm gonna re-do it in `monad` as my next step).~~
 
+Important thing! We use `%wrapper = "monadUserState"`. It is the most complicated wrapper for Alex, but the most powerful one. It allows us several things.
+1. We can have separate "states" in which tokenizer works. For example, we switch to `comment` state when we encounter a `/*` in which we treat all the characters differently, or the most complicated one so far -- `str`. In `str` we have some escape characters(nothing too fancy), and different error messages, etc. Tokenization should end in state `0`, otherwise we report error(Unclosed comment, or string).
+1. We can report custom errors with `alexError`.
+1. We can maintain our state(we have a string buffer, and a bufferStart) that we use to properly tokenize the String(I did a little bit of a dirty job when I tokenize strings, it uses `String`, which is `[Char]` which is not very efficient, compared to `Text`, so I push each character in reverse with `c:str`, and then reverse it at the end. I probably will switch to `Data.Text` when I'm not that lazy)
+
 TODO:  
 - [x] `TigerLexer.x` should be implemented with ~~`monad`~~ `monadUserState` wrapper.
 - [x] String value that you return for a string literal should have all the escape sequences translated into their meanings  
