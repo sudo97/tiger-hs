@@ -227,9 +227,9 @@ scanner str = runAlex str loop
 
 So we see here that we run our monad with initial string, and a monadic value. `loop` has type `Alex Token` in this case.
 
-___Now important thing. This `%wrapper = "monad"` allows us to use different startcodes. You can think of it as a "mode" in which lexer works. For example we can prevent unclosed comments by moving into `comment` startcode, and then in `alexEOF` do additional check on this `startcode` to see if it's `== comment` and thus return `Left "Unexpected EOF, unclosed comment"` instead of pure []___
+~~Now important thing. This `%wrapper = "monad"` allows us to use different startcodes. You can think of it as a "mode" in which lexer works. For example we can prevent unclosed comments by moving into `comment` startcode, and then in `alexEOF` do additional check on this `startcode` to see if it's `== comment` and thus return `Left "Unexpected EOF, unclosed comment"` instead of pure []~~
 
-___Now, Alex has tiger Lexer in it's examples and it's using `monad` too, but I'm not gonna use it. I'm willing to make mine read easier, and also this would be fair to do it on my own. For now I'm leaving `Token.x` as an easy minimal example of how `monad` wrapper works. `TigerLexer.x` is implemented with `posn` wrapper for now (I'm gonna re-do it in `monad` as my next step).___
+~~Now, Alex has tiger Lexer in it's examples and it's using `monad` too, but I'm not gonna use it. I'm willing to make mine read easier, and also this would be fair to do it on my own. For now I'm leaving `Token.x` as an easy minimal example of how `monad` wrapper works. `TigerLexer.x` is implemented with `posn` wrapper for now (I'm gonna re-do it in `monad` as my next step).~~
 
 TODO:  
 - [ ] `TigerLexer.x` should be implemented with `monad` wrapper.
