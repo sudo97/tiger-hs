@@ -241,4 +241,4 @@ TODO:
 - [x] String value that you return for a string literal should have all the escape sequences translated into their meanings  
 - [x] Detect unclosed comments, and unclosed strings  
 - [x] Provide proper error handling  
-- [ ] Implement the rest of the tokens
+- [x] Implement the rest of the tokens

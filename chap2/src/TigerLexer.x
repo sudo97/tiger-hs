@@ -8,7 +8,7 @@ import Tokens
 
 $digit = 0-9            -- digits
 $alpha = [a-zA-Z]       -- alphabetic characters
-$literally_any = [.\n]  -- . is the same as [^\n]
+$literally_any = [.\n]  -- . is the same as [^\n], so we need 'em both
 
 tokens :-
 <0> $white+                         ;
@@ -24,55 +24,59 @@ tokens :-
 <str> \n                            { stringNewlineError }
 <str>  [^\"]                        { scanStringItem }
 <str>  \"                           { endStr `andBegin` 0 }
---  <0> $alpha+($digit|$alpha|"_")*     { \(AlexPn _ line col) val -> TokId (line, col) val }
---  <0> type                            { pos TokType }
---  <0> var                             { pos TokVar }
---  <0> function                        { pos TokFunction }
---  <0> break                           { pos TokBreak }
---  <0> of                              { pos TokOf }
---  <0> end                             { pos TokEnd }
---  <0> in                              { pos TokIn }
---  <0> nil                             { pos TokNil }
---  <0> let                             { pos TokLet }
---  <0> do                              { pos TokDo }
---  <0> to                              { pos TokTo }
---  <0> for                             { pos TokFor }
---  <0> while                           { pos TokWhile }
---  <0> else                            { pos TokElse }
---  <0> then                            { pos TokThen }
---  <0> if                              { pos TokIf }
---  <0> array                           { pos TokArray }
---  <0> ":="                            { pos TokAssign }
---  <0> "||"                            { pos TokOr }
---  <0> "&&"                            { pos TokAnd }
---  <0> ">="                            { pos TokGe }
---  <0> ">"                             { pos TokGt }
---  <0> "<="                            { pos TokLe }
---  <0> "<"                             { pos TokLt }
---  <0> "<>"                            { pos TokNeq }
---  <0> "="                             { pos TokEq }
---  <0> "/"                             { pos TokDivide }
---  <0> "*"                             { pos TokTimes }
---  <0> "-"                             { pos TokMinus }
---  <0> "+"                             { pos TokPlus }
---  <0> "."                             { pos TokDot }
---  <0> "}"                             { pos TokRbrace }
---  <0> "{"                             { pos TokLbrace }
---  <0> "["                             { pos TokRbrack }
---  <0> "]"                             { pos TokLbrack }
---  <0> ")"                             { pos TokRparen }
---  <0> "("                             { pos TokLparen }
---  <0> ";"                             { pos TokSemicolon }
---  <0> ":"                             { pos TokColon }
---  <0> ","                             { pos TokComma }
+<0> type                            { makeToken TokType }
+<0> var                             { makeToken TokVar }
+<0> function                        { makeToken TokFunction }
+<0> break                           { makeToken TokBreak }
+<0> of                              { makeToken TokOf }
+<0> end                             { makeToken TokEnd }
+<0> in                              { makeToken TokIn }
+<0> nil                             { makeToken TokNil }
+<0> let                             { makeToken TokLet }
+<0> do                              { makeToken TokDo }
+<0> to                              { makeToken TokTo }
+<0> for                             { makeToken TokFor }
+<0> while                           { makeToken TokWhile }
+<0> else                            { makeToken TokElse }
+<0> then                            { makeToken TokThen }
+<0> if                              { makeToken TokIf }
+<0> array                           { makeToken TokArray }
+<0> $alpha+($digit|$alpha|"_")*     { readId }
+<0> ":="                            { makeToken TokAssign }
+<0> "||"                            { makeToken TokOr }
+<0> "&&"                            { makeToken TokAnd }
+<0> ">="                            { makeToken TokGe }
+<0> ">"                             { makeToken TokGt }
+<0> "<="                            { makeToken TokLe }
+<0> "<"                             { makeToken TokLt }
+<0> "<>"                            { makeToken TokNeq }
+<0> "="                             { makeToken TokEq }
+<0> "/"                             { makeToken TokDivide }
+<0> "*"                             { makeToken TokTimes }
+<0> "-"                             { makeToken TokMinus }
+<0> "+"                             { makeToken TokPlus }
+<0> "."                             { makeToken TokDot }
+<0> "}"                             { makeToken TokRbrace }
+<0> "{"                             { makeToken TokLbrace }
+<0> "["                             { makeToken TokRbrack }
+<0> "]"                             { makeToken TokLbrack }
+<0> ")"                             { makeToken TokRparen }
+<0> "("                             { makeToken TokLparen }
+<0> ";"                             { makeToken TokSemicolon }
+<0> ":"                             { makeToken TokColon }
+<0> ","                             { makeToken TokComma }
 {
 -- prog = "   /* some */ \"string\\\" here\" "
 prog = "  /*comment lslalsdf \n \n */ */ "
 
 readInteger ((AlexPn _ line col), _, _, val) len = pure $ TokInt (line, col) (read $ take len val)
 
--- readStr  ((AlexPn _ line col), _, _, val) len = pure $ TokString (line, col) (take len val)
--- pos construct (AlexPn _ line col) _ = construct (line, col)
+readId ((AlexPn _ line col), _, _, s) len = pure $ TokId (line, col) (take len s)
+
+type Action = AlexInput -> Int -> Alex Token
+
+makeToken :: (Pos -> Token) -> Action
+makeToken token ((AlexPn _ line col), _, _, _) _  = pure $ token (line, col)
 
 data AlexUserState = AlexUserState { lexerStringBuffer :: String, bufferStart :: Pos }
 
