@@ -1,0 +1,822 @@
+/*<<<<< test1.tig >>>>>*/
+
+/* an array type and an array variable */
+let
+	type  arrtype = array of int
+	var arr1:arrtype := arrtype [10] of 0
+in
+	arr1
+end
+/*
+Right [TokLet (2,1),TokType (3,9),TokId (3,15) "arrtype",TokEq (3,23),TokArray (3,25),TokOf (3,31),TokId (3,34) "int",TokVar (4,9),TokId (4,13) "arr1",TokColon (4,17),TokId (4,18) "arrtype",TokAssign (4,26),TokId (4,29) "arrtype",TokRbrack (4,37),TokInt (4,38) 10,TokLbrack (4,40),TokOf (4,42),TokInt (4,45) 0,TokIn (5,1),TokId (6,9) "arr1",TokEnd (7,1)]
+*/
+/* >>>>> end of test1.tig <<<<< */
+/*<<<<< test10.tig >>>>>*/
+
+/* error : body of while not unit */
+while(10 > 5) do 5+6
+/*
+Right [TokWhile (2,1),TokLparen (2,6),TokInt (2,7) 10,TokGt (2,10),TokInt (2,12) 5,TokRparen (2,13),TokDo (2,15),TokInt (2,18) 5,TokPlus (2,19),TokInt (2,20) 6]
+*/
+/* >>>>> end of test10.tig <<<<< */
+/*<<<<< test11.tig >>>>>*/
+
+/* error hi expr is not int, and index variable erroneously assigned to.  */
+for i:=10 to " " do 
+	i := i - 1
+/*
+Right [TokFor (2,1),TokId (2,5) "i",TokAssign (2,6),TokInt (2,8) 10,TokTo (2,11),TokString (2,14) " ",TokDo (2,18),TokId (3,9) "i",TokAssign (3,11),TokId (3,14) "i",TokMinus (3,16),TokInt (3,18) 1]
+*/
+/* >>>>> end of test11.tig <<<<< */
+/*<<<<< test12.tig >>>>>*/
+
+/* valid for and let */
+
+let
+	var a:= 0
+in 
+	for i:=0 to 100 do (a:=a+1;())
+end
+/*
+Right [TokLet (3,1),TokVar (4,9),TokId (4,13) "a",TokAssign (4,14),TokInt (4,17) 0,TokIn (5,1),TokFor (6,9),TokId (6,13) "i",TokAssign (6,14),TokInt (6,16) 0,TokTo (6,18),TokInt (6,21) 100,TokDo (6,25),TokLparen (6,28),TokId (6,29) "a",TokAssign (6,30),TokId (6,32) "a",TokPlus (6,33),TokInt (6,34) 1,TokSemicolon (6,35),TokLparen (6,36),TokRparen (6,37),TokRparen (6,38),TokEnd (7,1)]
+*/
+/* >>>>> end of test12.tig <<<<< */
+/*<<<<< test13.tig >>>>>*/
+
+/* error: comparison of incompatible types */
+
+3 > "df"
+/*
+Right [TokInt (3,1) 3,TokGt (3,3),TokString (3,5) "df"]
+*/
+/* >>>>> end of test13.tig <<<<< */
+/*<<<<< test14.tig >>>>>*/
+
+/* error : compare rec with array */
+
+let
+
+	type arrtype = array of int
+	type rectype = {name:string, id: int}
+
+	var rec := rectype {name="aname", id=0}
+	var arr := arrtype [3] of 0
+
+in
+	if rec <> arr then 3 else 4
+end
+/*
+Right [TokLet (3,1),TokType (5,9),TokId (5,14) "arrtype",TokEq (5,22),TokArray (5,24),TokOf (5,30),TokId (5,33) "int",TokType (6,9),TokId (6,14) "rectype",TokEq (6,22),TokLbrace (6,24),TokId (6,25) "name",TokColon (6,29),TokId (6,30) "string",TokComma (6,36),TokId (6,38) "id",TokColon (6,40),TokId (6,42) "int",TokRbrace (6,45),TokVar (8,9),TokId (8,13) "rec",TokAssign (8,17),TokId (8,20) "rectype",TokLbrace (8,28),TokId (8,29) "name",TokEq (8,33),TokString (8,34) "aname",TokComma (8,41),TokId (8,43) "id",TokEq (8,45),TokInt (8,46) 0,TokRbrace (8,47),TokVar (9,9),TokId (9,13) "arr",TokAssign (9,17),TokId (9,20) "arrtype",TokRbrack (9,28),TokInt (9,29) 3,TokLbrack (9,30),TokOf (9,32),TokInt (9,35) 0,TokIn (11,1),TokIf (12,9),TokId (12,12) "rec",TokNeq (12,16),TokId (12,19) "arr",TokThen (12,23),TokInt (12,28) 3,TokElse (12,30),TokInt (12,35) 4,TokEnd (13,1)]
+*/
+/* >>>>> end of test14.tig <<<<< */
+/*<<<<< test15.tig >>>>>*/
+
+/* error : if-then returns non unit */
+
+if 20 then 3
+/*
+Right [TokIf (3,1),TokInt (3,4) 20,TokThen (3,7),TokInt (3,12) 3]
+*/
+/* >>>>> end of test15.tig <<<<< */
+/*<<<<< test16.tig >>>>>*/
+
+/* error: mutually recursive types thet do not pass through record or array */
+let 
+
+type a=c
+type b=a
+type c=d
+type d=a
+
+in
+ ""
+end
+/*
+Right [TokLet (2,1),TokType (4,1),TokId (4,6) "a",TokEq (4,7),TokId (4,8) "c",TokType (5,1),TokId (5,6) "b",TokEq (5,7),TokId (5,8) "a",TokType (6,1),TokId (6,6) "c",TokEq (6,7),TokId (6,8) "d",TokType (7,1),TokId (7,6) "d",TokEq (7,7),TokId (7,8) "a",TokIn (9,1),TokString (10,2) "",TokEnd (11,1)]
+*/
+/* >>>>> end of test16.tig <<<<< */
+/*<<<<< test17.tig >>>>>*/
+
+/* error: definition of recursive types is interrupted */
+let
+/* define a tree */
+type tree ={key: int, children: treelist}
+var d:int :=0
+type treelist = {hd: tree, tl: treelist}
+
+in
+	d
+end
+/*
+Right [TokLet (2,1),TokType (4,1),TokId (4,6) "tree",TokEq (4,11),TokLbrace (4,12),TokId (4,13) "key",TokColon (4,16),TokId (4,18) "int",TokComma (4,21),TokId (4,23) "children",TokColon (4,31),TokId (4,33) "treelist",TokRbrace (4,41),TokVar (5,1),TokId (5,5) "d",TokColon (5,6),TokId (5,7) "int",TokAssign (5,11),TokInt (5,13) 0,TokType (6,1),TokId (6,6) "treelist",TokEq (6,15),TokLbrace (6,17),TokId (6,18) "hd",TokColon (6,20),TokId (6,22) "tree",TokComma (6,26),TokId (6,28) "tl",TokColon (6,30),TokId (6,32) "treelist",TokRbrace (6,40),TokIn (8,1),TokId (9,9) "d",TokEnd (10,1)]
+*/
+/* >>>>> end of test17.tig <<<<< */
+/*<<<<< test18.tig >>>>>*/
+
+/* error : definition of recursive functions is interrupted */
+let
+
+function do_nothing1(a: int, b: string):int=
+		(do_nothing2(a+1);0)
+
+var d:=0
+
+function do_nothing2(d: int):string =
+		(do_nothing1(d, "str");" ")
+
+in
+	do_nothing1(0, "str2")
+end
+
+/*
+Right [TokLet (2,1),TokFunction (4,1),TokId (4,10) "do_nothing1",TokLparen (4,21),TokId (4,22) "a",TokColon (4,23),TokId (4,25) "int",TokComma (4,28),TokId (4,30) "b",TokColon (4,31),TokId (4,33) "string",TokRparen (4,39),TokColon (4,40),TokId (4,41) "int",TokEq (4,44),TokLparen (5,17),TokId (5,18) "do_nothing2",TokLparen (5,29),TokId (5,30) "a",TokPlus (5,31),TokInt (5,32) 1,TokRparen (5,33),TokSemicolon (5,34),TokInt (5,35) 0,TokRparen (5,36),TokVar (7,1),TokId (7,5) "d",TokAssign (7,6),TokInt (7,8) 0,TokFunction (9,1),TokId (9,10) "do_nothing2",TokLparen (9,21),TokId (9,22) "d",TokColon (9,23),TokId (9,25) "int",TokRparen (9,28),TokColon (9,29),TokId (9,30) "string",TokEq (9,37),TokLparen (10,17),TokId (10,18) "do_nothing1",TokLparen (10,29),TokId (10,30) "d",TokComma (10,31),TokString (10,33) "str",TokRparen (10,38),TokSemicolon (10,39),TokString (10,40) " ",TokRparen (10,43),TokIn (12,1),TokId (13,9) "do_nothing1",TokLparen (13,20),TokInt (13,21) 0,TokComma (13,22),TokString (13,24) "str2",TokRparen (13,30),TokEnd (14,1)]
+*/
+/* >>>>> end of test18.tig <<<<< */
+/*<<<<< test19.tig >>>>>*/
+
+/* error : second function uses variables local to the first one, undeclared variable */
+let
+
+function do_nothing1(a: int, b: string):int=
+		(do_nothing2(a+1);0)
+
+function do_nothing2(d: int):string =
+		(do_nothing1(a, "str");" ")
+
+in
+	do_nothing1(0, "str2")
+end
+
+/*
+Right [TokLet (2,1),TokFunction (4,1),TokId (4,10) "do_nothing1",TokLparen (4,21),TokId (4,22) "a",TokColon (4,23),TokId (4,25) "int",TokComma (4,28),TokId (4,30) "b",TokColon (4,31),TokId (4,33) "string",TokRparen (4,39),TokColon (4,40),TokId (4,41) "int",TokEq (4,44),TokLparen (5,17),TokId (5,18) "do_nothing2",TokLparen (5,29),TokId (5,30) "a",TokPlus (5,31),TokInt (5,32) 1,TokRparen (5,33),TokSemicolon (5,34),TokInt (5,35) 0,TokRparen (5,36),TokFunction (7,1),TokId (7,10) "do_nothing2",TokLparen (7,21),TokId (7,22) "d",TokColon (7,23),TokId (7,25) "int",TokRparen (7,28),TokColon (7,29),TokId (7,30) "string",TokEq (7,37),TokLparen (8,17),TokId (8,18) "do_nothing1",TokLparen (8,29),TokId (8,30) "a",TokComma (8,31),TokString (8,33) "str",TokRparen (8,38),TokSemicolon (8,39),TokString (8,40) " ",TokRparen (8,43),TokIn (10,1),TokId (11,9) "do_nothing1",TokLparen (11,20),TokInt (11,21) 0,TokComma (11,22),TokString (11,24) "str2",TokRparen (11,30),TokEnd (12,1)]
+*/
+/* >>>>> end of test19.tig <<<<< */
+/*<<<<< test2.tig >>>>>*/
+
+/* arr1 is valid since expression 0 is int = myint */
+let
+	type myint = int
+	type  arrtype = array of myint
+
+	var arr1:arrtype := arrtype [10] of 0
+in
+	arr1
+end
+/*
+Right [TokLet (2,1),TokType (3,9),TokId (3,14) "myint",TokEq (3,20),TokId (3,22) "int",TokType (4,9),TokId (4,15) "arrtype",TokEq (4,23),TokArray (4,25),TokOf (4,31),TokId (4,34) "myint",TokVar (6,9),TokId (6,13) "arr1",TokColon (6,17),TokId (6,18) "arrtype",TokAssign (6,26),TokId (6,29) "arrtype",TokRbrack (6,37),TokInt (6,38) 10,TokLbrack (6,40),TokOf (6,42),TokInt (6,45) 0,TokIn (7,1),TokId (8,9) "arr1",TokEnd (9,1)]
+*/
+/* >>>>> end of test2.tig <<<<< */
+/*<<<<< test20.tig >>>>>*/
+
+/* error: undeclared variable i */
+
+while 10 > 5 do (i+1;())
+/*
+Right [TokWhile (3,1),TokInt (3,7) 10,TokGt (3,10),TokInt (3,12) 5,TokDo (3,14),TokLparen (3,17),TokId (3,18) "i",TokPlus (3,19),TokInt (3,20) 1,TokSemicolon (3,21),TokLparen (3,22),TokRparen (3,23),TokRparen (3,24)]
+*/
+/* >>>>> end of test20.tig <<<<< */
+/*<<<<< test21.tig >>>>>*/
+
+/* error : procedure returns value  and procedure is used in arexpr */
+let
+
+/* calculate n! */
+function nfactor(n: int) =
+		if  n = 0 
+			then 1
+			else n * nfactor(n-1)
+
+in
+	nfactor(10)
+end
+
+/*
+Right [TokLet (2,1),TokFunction (5,1),TokId (5,10) "nfactor",TokLparen (5,17),TokId (5,18) "n",TokColon (5,19),TokId (5,21) "int",TokRparen (5,24),TokEq (5,26),TokIf (6,17),TokId (6,21) "n",TokEq (6,23),TokInt (6,25) 0,TokThen (7,25),TokInt (7,30) 1,TokElse (8,25),TokId (8,30) "n",TokTimes (8,32),TokId (8,34) "nfactor",TokLparen (8,41),TokId (8,42) "n",TokMinus (8,43),TokInt (8,44) 1,TokRparen (8,45),TokIn (10,1),TokId (11,9) "nfactor",TokLparen (11,16),TokInt (11,17) 10,TokRparen (11,19),TokEnd (12,1)]
+*/
+/* >>>>> end of test21.tig <<<<< */
+/*<<<<< test22.tig >>>>>*/
+
+/* error : field not in record type */
+
+let 
+	type rectype = {name:string , id:int}
+	var rec1 := rectype {name="Name", id=0}
+in
+	rec1.nam := "asd"
+end
+/*
+Right [TokLet (3,1),TokType (4,9),TokId (4,14) "rectype",TokEq (4,22),TokLbrace (4,24),TokId (4,25) "name",TokColon (4,29),TokId (4,30) "string",TokComma (4,37),TokId (4,39) "id",TokColon (4,41),TokId (4,42) "int",TokRbrace (4,45),TokVar (5,9),TokId (5,13) "rec1",TokAssign (5,18),TokId (5,21) "rectype",TokLbrace (5,29),TokId (5,30) "name",TokEq (5,34),TokString (5,35) "Name",TokComma (5,41),TokId (5,43) "id",TokEq (5,45),TokInt (5,46) 0,TokRbrace (5,47),TokIn (6,1),TokId (7,9) "rec1",TokDot (7,13),TokId (7,14) "nam",TokAssign (7,18),TokString (7,21) "asd",TokEnd (8,1)]
+*/
+/* >>>>> end of test22.tig <<<<< */
+/*<<<<< test23.tig >>>>>*/
+
+/* error : type mismatch */
+
+let 
+	type rectype = {name:string , id:int}
+	var rec1 := rectype {name="aname", id=0}
+in
+	rec1.name := 3;
+	rec1.id := "" 
+end
+/*
+Right [TokLet (3,1),TokType (4,9),TokId (4,14) "rectype",TokEq (4,22),TokLbrace (4,24),TokId (4,25) "name",TokColon (4,29),TokId (4,30) "string",TokComma (4,37),TokId (4,39) "id",TokColon (4,41),TokId (4,42) "int",TokRbrace (4,45),TokVar (5,9),TokId (5,13) "rec1",TokAssign (5,18),TokId (5,21) "rectype",TokLbrace (5,29),TokId (5,30) "name",TokEq (5,34),TokString (5,35) "aname",TokComma (5,42),TokId (5,44) "id",TokEq (5,46),TokInt (5,47) 0,TokRbrace (5,48),TokIn (6,1),TokId (7,9) "rec1",TokDot (7,13),TokId (7,14) "name",TokAssign (7,19),TokInt (7,22) 3,TokSemicolon (7,23),TokId (8,9) "rec1",TokDot (8,13),TokId (8,14) "id",TokAssign (8,17),TokString (8,20) "",TokEnd (9,1)]
+*/
+/* >>>>> end of test23.tig <<<<< */
+/*<<<<< test24.tig >>>>>*/
+
+/* error : variable not array */
+let 
+	var d:=0
+in
+	d[3]
+end
+
+/*
+Right [TokLet (2,1),TokVar (3,9),TokId (3,13) "d",TokAssign (3,14),TokInt (3,16) 0,TokIn (4,1),TokId (5,9) "d",TokRbrack (5,10),TokInt (5,11) 3,TokLbrack (5,12),TokEnd (6,1)]
+*/
+/* >>>>> end of test24.tig <<<<< */
+/*<<<<< test25.tig >>>>>*/
+
+/* error : variable not record */
+let 
+	var d:=0
+in
+	d.f 
+end
+
+/*
+Right [TokLet (2,1),TokVar (3,9),TokId (3,13) "d",TokAssign (3,14),TokInt (3,16) 0,TokIn (4,1),TokId (5,9) "d",TokDot (5,10),TokId (5,11) "f",TokEnd (6,1)]
+*/
+/* >>>>> end of test25.tig <<<<< */
+/*<<<<< test26.tig >>>>>*/
+
+/* error : integer required */
+
+3 + "var"
+/*
+Right [TokInt (3,1) 3,TokPlus (3,3),TokString (3,5) "var"]
+*/
+/* >>>>> end of test26.tig <<<<< */
+/*<<<<< test27.tig >>>>>*/
+
+/* locals hide globals */
+let
+	var a:=0
+
+	function g(a:int):int = a 
+in
+ g(2)
+end
+/*
+Right [TokLet (2,1),TokVar (3,9),TokId (3,13) "a",TokAssign (3,14),TokInt (3,16) 0,TokFunction (5,9),TokId (5,18) "g",TokLparen (5,19),TokId (5,20) "a",TokColon (5,21),TokId (5,22) "int",TokRparen (5,25),TokColon (5,26),TokId (5,27) "int",TokEq (5,31),TokId (5,33) "a",TokIn (6,1),TokId (7,2) "g",TokLparen (7,3),TokInt (7,4) 2,TokRparen (7,5),TokEnd (8,1)]
+*/
+/* >>>>> end of test27.tig <<<<< */
+/*<<<<< test28.tig >>>>>*/
+
+/* error : different record types */
+
+let
+	type rectype1 = {name:string , id:int}
+	type rectype2 = {name:string , id:int}
+
+	var rec1: rectype1 := rectype2 {name="Name", id=0}
+in
+	rec1
+end
+/*
+Right [TokLet (3,1),TokType (4,9),TokId (4,14) "rectype1",TokEq (4,23),TokLbrace (4,25),TokId (4,26) "name",TokColon (4,30),TokId (4,31) "string",TokComma (4,38),TokId (4,40) "id",TokColon (4,42),TokId (4,43) "int",TokRbrace (4,46),TokType (5,9),TokId (5,14) "rectype2",TokEq (5,23),TokLbrace (5,25),TokId (5,26) "name",TokColon (5,30),TokId (5,31) "string",TokComma (5,38),TokId (5,40) "id",TokColon (5,42),TokId (5,43) "int",TokRbrace (5,46),TokVar (7,9),TokId (7,13) "rec1",TokColon (7,17),TokId (7,19) "rectype1",TokAssign (7,28),TokId (7,31) "rectype2",TokLbrace (7,40),TokId (7,41) "name",TokEq (7,45),TokString (7,46) "Name",TokComma (7,52),TokId (7,54) "id",TokEq (7,56),TokInt (7,57) 0,TokRbrace (7,58),TokIn (8,1),TokId (9,9) "rec1",TokEnd (10,1)]
+*/
+/* >>>>> end of test28.tig <<<<< */
+/*<<<<< test29.tig >>>>>*/
+
+/* error : different array types */
+
+let
+	type arrtype1 = array of int
+	type arrtype2 = array of int
+
+	var arr1: arrtype1 := arrtype2 [10] of 0
+in
+	arr1
+end
+/*
+Right [TokLet (3,1),TokType (4,9),TokId (4,14) "arrtype1",TokEq (4,23),TokArray (4,25),TokOf (4,31),TokId (4,34) "int",TokType (5,9),TokId (5,14) "arrtype2",TokEq (5,23),TokArray (5,25),TokOf (5,31),TokId (5,34) "int",TokVar (7,9),TokId (7,13) "arr1",TokColon (7,17),TokId (7,19) "arrtype1",TokAssign (7,28),TokId (7,31) "arrtype2",TokRbrack (7,40),TokInt (7,41) 10,TokLbrack (7,43),TokOf (7,45),TokInt (7,48) 0,TokIn (8,1),TokId (9,9) "arr1",TokEnd (10,1)]
+*/
+/* >>>>> end of test29.tig <<<<< */
+/*<<<<< test3.tig >>>>>*/
+
+/* a record type and a record variable */
+let
+	type  rectype = {name:string, age:int}
+	var rec1:rectype := rectype {name="Nobody", age=1000}
+in
+	rec1.name := "Somebody";
+	rec1
+end
+/*
+Right [TokLet (2,1),TokType (3,9),TokId (3,15) "rectype",TokEq (3,23),TokLbrace (3,25),TokId (3,26) "name",TokColon (3,30),TokId (3,31) "string",TokComma (3,37),TokId (3,39) "age",TokColon (3,42),TokId (3,43) "int",TokRbrace (3,46),TokVar (4,9),TokId (4,13) "rec1",TokColon (4,17),TokId (4,18) "rectype",TokAssign (4,26),TokId (4,29) "rectype",TokLbrace (4,37),TokId (4,38) "name",TokEq (4,42),TokString (4,43) "Nobody",TokComma (4,51),TokId (4,53) "age",TokEq (4,56),TokInt (4,57) 1000,TokRbrace (4,61),TokIn (5,1),TokId (6,9) "rec1",TokDot (6,13),TokId (6,14) "name",TokAssign (6,19),TokString (6,22) "Somebody",TokSemicolon (6,32),TokId (7,9) "rec1",TokEnd (8,1)]
+*/
+/* >>>>> end of test3.tig <<<<< */
+/*<<<<< test30.tig >>>>>*/
+
+/* synonyms are fine */
+
+let 
+		type a = array of int
+		type b = a
+
+		var arr1:a := b [10] of 0
+in
+		arr1[2]
+end
+/*
+Right [TokLet (3,1),TokType (4,17),TokId (4,22) "a",TokEq (4,24),TokArray (4,26),TokOf (4,32),TokId (4,35) "int",TokType (5,17),TokId (5,22) "b",TokEq (5,24),TokId (5,26) "a",TokVar (7,17),TokId (7,21) "arr1",TokColon (7,25),TokId (7,26) "a",TokAssign (7,28),TokId (7,31) "b",TokRbrack (7,33),TokInt (7,34) 10,TokLbrack (7,36),TokOf (7,38),TokInt (7,41) 0,TokIn (8,1),TokId (9,17) "arr1",TokRbrack (9,21),TokInt (9,22) 2,TokLbrack (9,23),TokEnd (10,1)]
+*/
+/* >>>>> end of test30.tig <<<<< */
+/*<<<<< test31.tig >>>>>*/
+
+/* error : type constraint and init value differ */
+let 
+	var a:int := " "
+in
+	a
+end
+/*
+Right [TokLet (2,1),TokVar (3,9),TokId (3,13) "a",TokColon (3,14),TokId (3,15) "int",TokAssign (3,19),TokString (3,22) " ",TokIn (4,1),TokId (5,9) "a",TokEnd (6,1)]
+*/
+/* >>>>> end of test31.tig <<<<< */
+/*<<<<< test32.tig >>>>>*/
+
+/* error : initializing exp and array type differ */
+
+let
+	type arrayty = array of int
+
+	var a := arrayty [10] of " "
+in
+	0
+end
+/*
+Right [TokLet (3,1),TokType (4,9),TokId (4,14) "arrayty",TokEq (4,22),TokArray (4,24),TokOf (4,30),TokId (4,33) "int",TokVar (6,9),TokId (6,13) "a",TokAssign (6,15),TokId (6,18) "arrayty",TokRbrack (6,26),TokInt (6,27) 10,TokLbrack (6,29),TokOf (6,31),TokString (6,34) " ",TokIn (7,1),TokInt (8,9) 0,TokEnd (9,1)]
+*/
+/* >>>>> end of test32.tig <<<<< */
+/*<<<<< test33.tig >>>>>*/
+
+/* error : unknown type */
+let
+	var a:= rectype {}
+in
+	0
+end
+/*
+Right [TokLet (2,1),TokVar (3,9),TokId (3,13) "a",TokAssign (3,14),TokId (3,17) "rectype",TokLbrace (3,25),TokRbrace (3,26),TokIn (4,1),TokInt (5,9) 0,TokEnd (6,1)]
+*/
+/* >>>>> end of test33.tig <<<<< */
+/*<<<<< test34.tig >>>>>*/
+
+/* error : formals and actuals have different types */
+let
+	function g (a:int , b:string):int = a
+in
+	g("one", "two")
+end
+/*
+Right [TokLet (2,1),TokFunction (3,9),TokId (3,18) "g",TokLparen (3,20),TokId (3,21) "a",TokColon (3,22),TokId (3,23) "int",TokComma (3,27),TokId (3,29) "b",TokColon (3,30),TokId (3,31) "string",TokRparen (3,37),TokColon (3,38),TokId (3,39) "int",TokEq (3,43),TokId (3,45) "a",TokIn (4,1),TokId (5,9) "g",TokLparen (5,10),TokString (5,11) "one",TokComma (5,16),TokString (5,18) "two",TokRparen (5,23),TokEnd (6,1)]
+*/
+/* >>>>> end of test34.tig <<<<< */
+/*<<<<< test35.tig >>>>>*/
+
+/* error : formals are more then actuals */
+let
+	function g (a:int , b:string):int = a
+in
+	g("one")
+end
+/*
+Right [TokLet (2,1),TokFunction (3,9),TokId (3,18) "g",TokLparen (3,20),TokId (3,21) "a",TokColon (3,22),TokId (3,23) "int",TokComma (3,27),TokId (3,29) "b",TokColon (3,30),TokId (3,31) "string",TokRparen (3,37),TokColon (3,38),TokId (3,39) "int",TokEq (3,43),TokId (3,45) "a",TokIn (4,1),TokId (5,9) "g",TokLparen (5,10),TokString (5,11) "one",TokRparen (5,16),TokEnd (6,1)]
+*/
+/* >>>>> end of test35.tig <<<<< */
+/*<<<<< test36.tig >>>>>*/
+
+/* error : formals are fewer then actuals */
+let
+	function g (a:int , b:string):int = a
+in
+	g(3,"one",5)
+end
+/*
+Right [TokLet (2,1),TokFunction (3,9),TokId (3,18) "g",TokLparen (3,20),TokId (3,21) "a",TokColon (3,22),TokId (3,23) "int",TokComma (3,27),TokId (3,29) "b",TokColon (3,30),TokId (3,31) "string",TokRparen (3,37),TokColon (3,38),TokId (3,39) "int",TokEq (3,43),TokId (3,45) "a",TokIn (4,1),TokId (5,9) "g",TokLparen (5,10),TokInt (5,11) 3,TokComma (5,12),TokString (5,13) "one",TokComma (5,18),TokInt (5,19) 5,TokRparen (5,20),TokEnd (6,1)]
+*/
+/* >>>>> end of test36.tig <<<<< */
+/*<<<<< test37.tig >>>>>*/
+
+/* redeclaration of variable; this is legal, there are two different
+   variables with the same name.  The second one hides the first.  */
+let
+	var a := 0
+	var a := " "
+in
+	0
+end
+/*
+Right [TokLet (3,1),TokVar (4,9),TokId (4,13) "a",TokAssign (4,15),TokInt (4,18) 0,TokVar (5,9),TokId (5,13) "a",TokAssign (5,15),TokString (5,18) " ",TokIn (6,1),TokInt (7,9) 0,TokEnd (8,1)]
+*/
+/* >>>>> end of test37.tig <<<<< */
+/*<<<<< test38.tig >>>>>*/
+
+/* This is illegal, since there are two types with the same name
+    in the same (consecutive) batch of mutually recursive types. 
+    See also test47  */
+let
+	type a = int
+	type a = string
+in
+	0
+end
+/*
+Right [TokLet (4,1),TokType (5,9),TokId (5,14) "a",TokEq (5,16),TokId (5,18) "int",TokType (6,9),TokId (6,14) "a",TokEq (6,16),TokId (6,18) "string",TokIn (7,1),TokInt (8,9) 0,TokEnd (9,1)]
+*/
+/* >>>>> end of test38.tig <<<<< */
+/*<<<<< test39.tig >>>>>*/
+
+/* This is illegal, since there are two functions with the same name
+    in the same (consecutive) batch of mutually recursive functions.
+   See also test48 */
+let
+	function g(a:int):int = a
+	function g(a:int):int = a
+in
+	0
+end
+/*
+Right [TokLet (4,1),TokFunction (5,9),TokId (5,18) "g",TokLparen (5,19),TokId (5,20) "a",TokColon (5,21),TokId (5,22) "int",TokRparen (5,25),TokColon (5,26),TokId (5,27) "int",TokEq (5,31),TokId (5,33) "a",TokFunction (6,9),TokId (6,18) "g",TokLparen (6,19),TokId (6,20) "a",TokColon (6,21),TokId (6,22) "int",TokRparen (6,25),TokColon (6,26),TokId (6,27) "int",TokEq (6,31),TokId (6,33) "a",TokIn (7,1),TokInt (8,9) 0,TokEnd (9,1)]
+*/
+/* >>>>> end of test39.tig <<<<< */
+/*<<<<< test4.tig >>>>>*/
+
+/* define a recursive function */
+let
+
+/* calculate n! */
+function nfactor(n: int): int =
+		if  n = 0 
+			then 1
+			else n * nfactor(n-1)
+
+in
+	nfactor(10)
+end
+
+/*
+Right [TokLet (2,1),TokFunction (5,1),TokId (5,10) "nfactor",TokLparen (5,17),TokId (5,18) "n",TokColon (5,19),TokId (5,21) "int",TokRparen (5,24),TokColon (5,25),TokId (5,27) "int",TokEq (5,31),TokIf (6,17),TokId (6,21) "n",TokEq (6,23),TokInt (6,25) 0,TokThen (7,25),TokInt (7,30) 1,TokElse (8,25),TokId (8,30) "n",TokTimes (8,32),TokId (8,34) "nfactor",TokLparen (8,41),TokId (8,42) "n",TokMinus (8,43),TokInt (8,44) 1,TokRparen (8,45),TokIn (10,1),TokId (11,9) "nfactor",TokLparen (11,16),TokInt (11,17) 10,TokRparen (11,19),TokEnd (12,1)]
+*/
+/* >>>>> end of test4.tig <<<<< */
+/*<<<<< test40.tig >>>>>*/
+
+/* error : procedure returns value */
+let
+	function g(a:int) = a
+in 
+	g(2)
+end
+
+/*
+Right [TokLet (2,1),TokFunction (3,9),TokId (3,18) "g",TokLparen (3,19),TokId (3,20) "a",TokColon (3,21),TokId (3,22) "int",TokRparen (3,25),TokEq (3,27),TokId (3,29) "a",TokIn (4,1),TokId (5,9) "g",TokLparen (5,10),TokInt (5,11) 2,TokRparen (5,12),TokEnd (6,1)]
+*/
+/* >>>>> end of test40.tig <<<<< */
+/*<<<<< test41.tig >>>>>*/
+
+/* local types hide global */
+let
+	type a = int
+in
+	let
+		type a = string
+	in
+		0
+	end
+end
+/*
+Right [TokLet (2,1),TokType (3,9),TokId (3,14) "a",TokEq (3,16),TokId (3,18) "int",TokIn (4,1),TokLet (5,9),TokType (6,17),TokId (6,22) "a",TokEq (6,24),TokId (6,26) "string",TokIn (7,9),TokInt (8,17) 0,TokEnd (9,9),TokEnd (10,1)]
+*/
+/* >>>>> end of test41.tig <<<<< */
+/*<<<<< test42.tig >>>>>*/
+
+/* correct declarations */
+let 
+
+type arrtype1 = array of int
+type rectype1 = {name:string, address:string, id: int , age: int}
+type arrtype2 = array of rectype1
+type rectype2 = {name : string, dates: arrtype1}
+
+type arrtype3 = array of string
+
+var arr1 := arrtype1 [10] of 0
+var arr2  := arrtype2 [5] of rectype1 {name="aname", address="somewhere", id=0, age=0}
+var arr3:arrtype3 := arrtype3 [100] of ""
+
+var rec1 := rectype1 {name="Kapoios", address="Kapou", id=02432, age=44}
+var rec2 := rectype2 {name="Allos", dates= arrtype1 [3] of 1900}
+
+in
+
+arr1[0] := 1; 
+arr1[9] := 3;
+arr2[3].name := "kati";
+arr2[1].age := 23;
+arr3[34] := "sfd";
+
+rec1.name := "sdf";
+rec2.dates[0] := 2323;
+rec2.dates[2] := 2323
+
+end
+/*
+Right [TokLet (2,1),TokType (4,1),TokId (4,6) "arrtype1",TokEq (4,15),TokArray (4,17),TokOf (4,23),TokId (4,26) "int",TokType (5,1),TokId (5,6) "rectype1",TokEq (5,15),TokLbrace (5,17),TokId (5,18) "name",TokColon (5,22),TokId (5,23) "string",TokComma (5,29),TokId (5,31) "address",TokColon (5,38),TokId (5,39) "string",TokComma (5,45),TokId (5,47) "id",TokColon (5,49),TokId (5,51) "int",TokComma (5,55),TokId (5,57) "age",TokColon (5,60),TokId (5,62) "int",TokRbrace (5,65),TokType (6,1),TokId (6,6) "arrtype2",TokEq (6,15),TokArray (6,17),TokOf (6,23),TokId (6,26) "rectype1",TokType (7,1),TokId (7,6) "rectype2",TokEq (7,15),TokLbrace (7,17),TokId (7,18) "name",TokColon (7,23),TokId (7,25) "string",TokComma (7,31),TokId (7,33) "dates",TokColon (7,38),TokId (7,40) "arrtype1",TokRbrace (7,48),TokType (9,1),TokId (9,6) "arrtype3",TokEq (9,15),TokArray (9,17),TokOf (9,23),TokId (9,26) "string",TokVar (11,1),TokId (11,5) "arr1",TokAssign (11,10),TokId (11,13) "arrtype1",TokRbrack (11,22),TokInt (11,23) 10,TokLbrack (11,25),TokOf (11,27),TokInt (11,30) 0,TokVar (12,1),TokId (12,5) "arr2",TokAssign (12,11),TokId (12,14) "arrtype2",TokRbrack (12,23),TokInt (12,24) 5,TokLbrack (12,25),TokOf (12,27),TokId (12,30) "rectype1",TokLbrace (12,39),TokId (12,40) "name",TokEq (12,44),TokString (12,45) "aname",TokComma (12,52),TokId (12,54) "address",TokEq (12,61),TokString (12,62) "somewhere",TokComma (12,73),TokId (12,75) "id",TokEq (12,77),TokInt (12,78) 0,TokComma (12,79),TokId (12,81) "age",TokEq (12,84),TokInt (12,85) 0,TokRbrace (12,86),TokVar (13,1),TokId (13,5) "arr3",TokColon (13,9),TokId (13,10) "arrtype3",TokAssign (13,19),TokId (13,22) "arrtype3",TokRbrack (13,31),TokInt (13,32) 100,TokLbrack (13,35),TokOf (13,37),TokString (13,40) "",TokVar (15,1),TokId (15,5) "rec1",TokAssign (15,10),TokId (15,13) "rectype1",TokLbrace (15,22),TokId (15,23) "name",TokEq (15,27),TokString (15,28) "Kapoios",TokComma (15,37),TokId (15,39) "address",TokEq (15,46),TokString (15,47) "Kapou",TokComma (15,54),TokId (15,56) "id",TokEq (15,58),TokInt (15,59) 2432,TokComma (15,64),TokId (15,66) "age",TokEq (15,69),TokInt (15,70) 44,TokRbrace (15,72),TokVar (16,1),TokId (16,5) "rec2",TokAssign (16,10),TokId (16,13) "rectype2",TokLbrace (16,22),TokId (16,23) "name",TokEq (16,27),TokString (16,28) "Allos",TokComma (16,35),TokId (16,37) "dates",TokEq (16,42),TokId (16,44) "arrtype1",TokRbrack (16,53),TokInt (16,54) 3,TokLbrack (16,55),TokOf (16,57),TokInt (16,60) 1900,TokRbrace (16,64),TokIn (18,1),TokId (20,1) "arr1",TokRbrack (20,5),TokInt (20,6) 0,TokLbrack (20,7),TokAssign (20,9),TokInt (20,12) 1,TokSemicolon (20,13),TokId (21,1) "arr1",TokRbrack (21,5),TokInt (21,6) 9,TokLbrack (21,7),TokAssign (21,9),TokInt (21,12) 3,TokSemicolon (21,13),TokId (22,1) "arr2",TokRbrack (22,5),TokInt (22,6) 3,TokLbrack (22,7),TokDot (22,8),TokId (22,9) "name",TokAssign (22,14),TokString (22,17) "kati",TokSemicolon (22,23),TokId (23,1) "arr2",TokRbrack (23,5),TokInt (23,6) 1,TokLbrack (23,7),TokDot (23,8),TokId (23,9) "age",TokAssign (23,13),TokInt (23,16) 23,TokSemicolon (23,18),TokId (24,1) "arr3",TokRbrack (24,5),TokInt (24,6) 34,TokLbrack (24,8),TokAssign (24,10),TokString (24,13) "sfd",TokSemicolon (24,18),TokId (26,1) "rec1",TokDot (26,5),TokId (26,6) "name",TokAssign (26,11),TokString (26,14) "sdf",TokSemicolon (26,19),TokId (27,1) "rec2",TokDot (27,5),TokId (27,6) "dates",TokRbrack (27,11),TokInt (27,12) 0,TokLbrack (27,13),TokAssign (27,15),TokInt (27,18) 2323,TokSemicolon (27,22),TokId (28,1) "rec2",TokDot (28,5),TokId (28,6) "dates",TokRbrack (28,11),TokInt (28,12) 2,TokLbrack (28,13),TokAssign (28,15),TokInt (28,18) 2323,TokEnd (30,1)]
+*/
+/* >>>>> end of test42.tig <<<<< */
+/*<<<<< test43.tig >>>>>*/
+
+/* initialize with unit and causing type mismatch in addition */
+
+let 
+	var a := ()
+in
+	a + 3
+end
+/*
+Right [TokLet (3,1),TokVar (4,9),TokId (4,13) "a",TokAssign (4,15),TokLparen (4,18),TokRparen (4,19),TokIn (5,1),TokId (6,9) "a",TokPlus (6,11),TokInt (6,13) 3,TokEnd (7,1)]
+*/
+/* >>>>> end of test43.tig <<<<< */
+/*<<<<< test44.tig >>>>>*/
+
+/* valid nil initialization and assignment */
+let 
+
+	type rectype = {name:string, id:int}
+	var b:rectype := nil
+
+in
+
+	b := nil
+
+end
+/*
+Right [TokLet (2,1),TokType (4,9),TokId (4,14) "rectype",TokEq (4,22),TokLbrace (4,24),TokId (4,25) "name",TokColon (4,29),TokId (4,30) "string",TokComma (4,36),TokId (4,38) "id",TokColon (4,40),TokId (4,41) "int",TokRbrace (4,44),TokVar (5,9),TokId (5,13) "b",TokColon (5,14),TokId (5,15) "rectype",TokAssign (5,23),TokNil (5,26),TokIn (7,1),TokId (9,9) "b",TokAssign (9,11),TokNil (9,14),TokEnd (11,1)]
+*/
+/* >>>>> end of test44.tig <<<<< */
+/*<<<<< test45.tig >>>>>*/
+
+/* error: initializing nil expressions not constrained by record type */
+let 
+	type rectype = {name:string, id:int}
+
+	var a:= nil
+in
+	a
+end
+/*
+Right [TokLet (2,1),TokType (3,9),TokId (3,14) "rectype",TokEq (3,22),TokLbrace (3,24),TokId (3,25) "name",TokColon (3,29),TokId (3,30) "string",TokComma (3,36),TokId (3,38) "id",TokColon (3,40),TokId (3,41) "int",TokRbrace (3,44),TokVar (5,9),TokId (5,13) "a",TokAssign (5,14),TokNil (5,17),TokIn (6,1),TokId (7,9) "a",TokEnd (8,1)]
+*/
+/* >>>>> end of test45.tig <<<<< */
+/*<<<<< test46.tig >>>>>*/
+
+/* valid rec comparisons */
+let 
+	type rectype = {name:string, id:int}
+	var b:rectype := nil
+in
+	b = nil;
+	b <> nil
+end
+/*
+Right [TokLet (2,1),TokType (3,9),TokId (3,14) "rectype",TokEq (3,22),TokLbrace (3,24),TokId (3,25) "name",TokColon (3,29),TokId (3,30) "string",TokComma (3,36),TokId (3,38) "id",TokColon (3,40),TokId (3,41) "int",TokRbrace (3,44),TokVar (4,9),TokId (4,13) "b",TokColon (4,14),TokId (4,15) "rectype",TokAssign (4,23),TokNil (4,26),TokIn (5,1),TokId (6,9) "b",TokEq (6,11),TokNil (6,13),TokSemicolon (6,16),TokId (7,9) "b",TokNeq (7,11),TokNil (7,14),TokEnd (8,1)]
+*/
+/* >>>>> end of test46.tig <<<<< */
+/*<<<<< test47.tig >>>>>*/
+
+/* This is legal.  The second type "a" simply hides the first one.
+   Because of the intervening variable declaration, the two "a" types
+   are not in the same  batch of mutually recursive types.
+   See also test38 */
+let
+	type a = int
+	var b := 4
+	type a = string
+in
+	0
+end
+/*
+Right [TokLet (5,1),TokType (6,9),TokId (6,14) "a",TokEq (6,16),TokId (6,18) "int",TokVar (7,9),TokId (7,13) "b",TokAssign (7,15),TokInt (7,18) 4,TokType (8,9),TokId (8,14) "a",TokEq (8,16),TokId (8,18) "string",TokIn (9,1),TokInt (10,9) 0,TokEnd (11,1)]
+*/
+/* >>>>> end of test47.tig <<<<< */
+/*<<<<< test48.tig >>>>>*/
+
+/* This is legal.  The second function "g" simply hides the first one.
+   Because of the intervening variable declaration, the two "g" functions
+   are not in the same  batch of mutually recursive functions. 
+   See also test39 */
+let
+	function g(a:int):int = a
+	type t = int
+	function g(a:int):int = a
+in
+	0
+end
+/*
+Right [TokLet (5,1),TokFunction (6,9),TokId (6,18) "g",TokLparen (6,19),TokId (6,20) "a",TokColon (6,21),TokId (6,22) "int",TokRparen (6,25),TokColon (6,26),TokId (6,27) "int",TokEq (6,31),TokId (6,33) "a",TokType (7,9),TokId (7,14) "t",TokEq (7,16),TokId (7,18) "int",TokFunction (8,9),TokId (8,18) "g",TokLparen (8,19),TokId (8,20) "a",TokColon (8,21),TokId (8,22) "int",TokRparen (8,25),TokColon (8,26),TokId (8,27) "int",TokEq (8,31),TokId (8,33) "a",TokIn (9,1),TokInt (10,9) 0,TokEnd (11,1)]
+*/
+/* >>>>> end of test48.tig <<<<< */
+/*<<<<< test49.tig >>>>>*/
+
+/* error: syntax error, nil should not be preceded by type-id.  */
+let 
+	type rectype = {name:string, id:int}
+
+	var a:= rectype nil
+in
+	a
+end
+/*
+Right [TokLet (2,1),TokType (3,9),TokId (3,14) "rectype",TokEq (3,22),TokLbrace (3,24),TokId (3,25) "name",TokColon (3,29),TokId (3,30) "string",TokComma (3,36),TokId (3,38) "id",TokColon (3,40),TokId (3,41) "int",TokRbrace (3,44),TokVar (5,9),TokId (5,13) "a",TokAssign (5,14),TokId (5,17) "rectype",TokNil (5,25),TokIn (6,1),TokId (7,9) "a",TokEnd (8,1)]
+*/
+/* >>>>> end of test49.tig <<<<< */
+/*<<<<< test5.tig >>>>>*/
+
+/* define valid recursive types */
+let
+/* define a list */
+type intlist = {hd: int, tl: intlist} 
+
+/* define a tree */
+type tree ={key: int, children: treelist}
+type treelist = {hd: tree, tl: treelist}
+
+var lis:intlist := intlist { hd=0, tl= nil } 
+
+in
+	lis
+end
+/*
+Right [TokLet (2,1),TokType (4,1),TokId (4,6) "intlist",TokEq (4,14),TokLbrace (4,16),TokId (4,17) "hd",TokColon (4,19),TokId (4,21) "int",TokComma (4,24),TokId (4,26) "tl",TokColon (4,28),TokId (4,30) "intlist",TokRbrace (4,37),TokType (7,1),TokId (7,6) "tree",TokEq (7,11),TokLbrace (7,12),TokId (7,13) "key",TokColon (7,16),TokId (7,18) "int",TokComma (7,21),TokId (7,23) "children",TokColon (7,31),TokId (7,33) "treelist",TokRbrace (7,41),TokType (8,1),TokId (8,6) "treelist",TokEq (8,15),TokLbrace (8,17),TokId (8,18) "hd",TokColon (8,20),TokId (8,22) "tree",TokComma (8,26),TokId (8,28) "tl",TokColon (8,30),TokId (8,32) "treelist",TokRbrace (8,40),TokVar (10,1),TokId (10,5) "lis",TokColon (10,8),TokId (10,9) "intlist",TokAssign (10,17),TokId (10,20) "intlist",TokLbrace (10,28),TokId (10,30) "hd",TokEq (10,32),TokInt (10,33) 0,TokComma (10,34),TokId (10,36) "tl",TokEq (10,38),TokNil (10,40),TokRbrace (10,44),TokIn (12,1),TokId (13,9) "lis",TokEnd (14,1)]
+*/
+/* >>>>> end of test5.tig <<<<< */
+/*<<<<< test50.tig >>>>>*/
+
+let 
+
+ type any = {any : int}
+ var buffer := getchar()
+
+function readint(any: any) : int =
+ let var i := 0
+     function isdigit(s : string) : int = 
+		  ord(buffer)>=ord("0") & ord(buffer)<=ord("9")
+     function skipto() =
+       while buffer=" " | buffer="\n"
+         do buffer := getchar()
+  in skipto();
+     any.any := isdigit(buffer);
+     while isdigit(buffer)
+       do (i := i*10+ord(buffer)-ord("0"); buffer := getchar());
+     i
+ end
+
+ type list = {first: int, rest: list}
+
+ function readlist() : list =
+    let var any := any{any=0}
+        var i := readint(any)
+     in if any.any
+         then list{first=i,rest=readlist()}
+         else nil
+    end
+
+ function merge(a: list, b: list) : list =
+   if a=nil then b
+   else if b=nil then a
+   else if a.first < b.first 
+      then list{first=a.first,rest=merge(a.rest,b)}
+      else list{first=b.first,rest=merge(a,b.rest)}
+
+ function printint(i: int) =
+  let function f(i:int) = if i>0 
+	     then (f(i/10); print(chr(i-i/10*10+ord("0"))))
+   in if i<0 then (print("-"); f(-i))
+      else if i>0 then f(i)
+      else print("0")
+  end
+
+ function printlist(l: list) =
+   if l=nil then print("\n")
+   else (printint(l.first); print(" "); printlist(l.rest))
+
+   var list1 := readlist()
+   var list2 := (buffer:=getchar(); readlist())
+
+
+  /* BODY OF MAIN PROGRAM */
+ in printlist(merge(list1,list2))
+end
+
+/*
+Left "lexical error at line 9, column 42"
+*/
+/* >>>>> end of test50.tig <<<<< */
+/*<<<<< test51.tig >>>>>*/
+
+/* A program to solve the 8-queens problem */
+
+let
+    var N := 8
+
+    type intArray = array of int
+
+    var row := intArray [ N ] of 0
+    var col := intArray [ N ] of 0
+    var diag1 := intArray [N+N-1] of 0
+    var diag2 := intArray [N+N-1] of 0
+
+    function printboard() =
+       (for i := 0 to N-1
+	 do (for j := 0 to N-1 
+	      do print(if col[i]=j then " O" else " .");
+	     print("\n"));
+         print("\n"))
+
+    function try(c:int) = 
+( /*  for i:= 0 to c do print("."); print("\n"); flush();*/
+     if c=N
+     then printboard()
+     else for r := 0 to N-1
+	   do if row[r]=0 & diag1[r+c]=0 & diag2[r+7-c]=0
+	           then (row[r]:=1; diag1[r+c]:=1; diag2[r+7-c]:=1;
+		         col[c]:=r;
+	                 try(c+1);
+			 row[r]:=0; diag1[r+c]:=0; diag2[r+7-c]:=0)
+
+)
+ in try(0)
+end
+	
+/*
+Left "lexical error at line 25, column 28"
+*/
+/* >>>>> end of test51.tig <<<<< */
+/*<<<<< test6.tig >>>>>*/
+
+/* define valid mutually recursive procedures */
+let
+
+function do_nothing1(a: int, b: string)=
+		do_nothing2(a+1)
+
+function do_nothing2(d: int) =
+		do_nothing1(d, "str")
+
+in
+	do_nothing1(0, "str2")
+end
+
+/*
+Right [TokLet (2,1),TokFunction (4,1),TokId (4,10) "do_nothing1",TokLparen (4,21),TokId (4,22) "a",TokColon (4,23),TokId (4,25) "int",TokComma (4,28),TokId (4,30) "b",TokColon (4,31),TokId (4,33) "string",TokRparen (4,39),TokEq (4,40),TokId (5,17) "do_nothing2",TokLparen (5,28),TokId (5,29) "a",TokPlus (5,30),TokInt (5,31) 1,TokRparen (5,32),TokFunction (7,1),TokId (7,10) "do_nothing2",TokLparen (7,21),TokId (7,22) "d",TokColon (7,23),TokId (7,25) "int",TokRparen (7,28),TokEq (7,30),TokId (8,17) "do_nothing1",TokLparen (8,28),TokId (8,29) "d",TokComma (8,30),TokString (8,32) "str",TokRparen (8,37),TokIn (10,1),TokId (11,9) "do_nothing1",TokLparen (11,20),TokInt (11,21) 0,TokComma (11,22),TokString (11,24) "str2",TokRparen (11,30),TokEnd (12,1)]
+*/
+/* >>>>> end of test6.tig <<<<< */
+/*<<<<< test7.tig >>>>>*/
+
+/* define valid mutually recursive functions */
+let
+
+function do_nothing1(a: int, b: string):int=
+		(do_nothing2(a+1);0)
+
+function do_nothing2(d: int):string =
+		(do_nothing1(d, "str");" ")
+
+in
+	do_nothing1(0, "str2")
+end
+
+/*
+Right [TokLet (2,1),TokFunction (4,1),TokId (4,10) "do_nothing1",TokLparen (4,21),TokId (4,22) "a",TokColon (4,23),TokId (4,25) "int",TokComma (4,28),TokId (4,30) "b",TokColon (4,31),TokId (4,33) "string",TokRparen (4,39),TokColon (4,40),TokId (4,41) "int",TokEq (4,44),TokLparen (5,17),TokId (5,18) "do_nothing2",TokLparen (5,29),TokId (5,30) "a",TokPlus (5,31),TokInt (5,32) 1,TokRparen (5,33),TokSemicolon (5,34),TokInt (5,35) 0,TokRparen (5,36),TokFunction (7,1),TokId (7,10) "do_nothing2",TokLparen (7,21),TokId (7,22) "d",TokColon (7,23),TokId (7,25) "int",TokRparen (7,28),TokColon (7,29),TokId (7,30) "string",TokEq (7,37),TokLparen (8,17),TokId (8,18) "do_nothing1",TokLparen (8,29),TokId (8,30) "d",TokComma (8,31),TokString (8,33) "str",TokRparen (8,38),TokSemicolon (8,39),TokString (8,40) " ",TokRparen (8,43),TokIn (10,1),TokId (11,9) "do_nothing1",TokLparen (11,20),TokInt (11,21) 0,TokComma (11,22),TokString (11,24) "str2",TokRparen (11,30),TokEnd (12,1)]
+*/
+/* >>>>> end of test7.tig <<<<< */
+/*<<<<< test8.tig >>>>>*/
+
+/* correct if */
+if (10 > 20) then 30 else 40	
+/*
+Right [TokIf (2,1),TokLparen (2,4),TokInt (2,5) 10,TokGt (2,8),TokInt (2,10) 20,TokRparen (2,12),TokThen (2,14),TokInt (2,19) 30,TokElse (2,22),TokInt (2,27) 40]
+*/
+/* >>>>> end of test8.tig <<<<< */
+/*<<<<< test9.tig >>>>>*/
+
+/* error : types of then - else differ */
+
+if (5>4) then 13 else  " "
+/*
+Right [TokIf (3,1),TokLparen (3,4),TokInt (3,5) 5,TokGt (3,6),TokInt (3,7) 4,TokRparen (3,8),TokThen (3,10),TokInt (3,15) 13,TokElse (3,18),TokString (3,24) " "]
+*/
+/* >>>>> end of test9.tig <<<<< */
