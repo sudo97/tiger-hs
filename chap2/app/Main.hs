@@ -10,9 +10,6 @@ main = do
   [file] <- getArgs
   contents <- openFile file ReadMode >>= hGetContents
   putStrLn contents
-  let result = lexTiger contents
-  print result
-  case result of
-    Right [TokString _ s] -> putStrLn s
-    Left e -> putStrLn e
-  pure ()
+  putStrLn "/*"
+  print $ lexTiger contents
+  putStrLn "*/"

@@ -242,3 +242,4 @@ TODO:
 - [x] Detect unclosed comments, and unclosed strings  
 - [x] Provide proper error handling  
 - [x] Implement the rest of the tokens
+- [x] Test with the sources from the book
